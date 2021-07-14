@@ -18,13 +18,13 @@ def createFileList(myDir, format='.jpg'):
     fileList.sort()
     return fileList
 
-dir_path = 'D:\\Work\\code\\remove_stamp_doc\\'
+dir_path = 'D:\\iris_project\\remove_stamp_doc\\'
 fileList = createFileList(dir_path)
 length = len(dir_path)
 for files in fileList:
     print(files)
     name = files[length:]
-
+    txtname = name[:-4]
     img = cv2.imread(files)
 
 
@@ -39,8 +39,7 @@ for files in fileList:
 
     im2 = img.copy()
 
-
-    file = open("D:\\Work\\code\\text\\{}.txt".format(name), "w+",encoding ="utf-8")
+    file = open("D:\\iris_project\\text\\{}.txt".format(txtname), "w+",encoding ="utf-8")
     file.write("")
     file.close()
 
@@ -57,7 +56,7 @@ for files in fileList:
             
             cropped = im2[y:y + h, x:x + w]
             
-            file = open("D:\\Work\\code\\text\\{}.txt".format(name), "a",encoding ="utf-8")
+            file = open("D:\\iris_project\\text\\{}.txt".format(txtname), "a",encoding ="utf-8")
             
             text = pytesseract.image_to_string(cropped,config=custom_config)
             
@@ -66,4 +65,4 @@ for files in fileList:
             
             file.close
             
-    cv2.imwrite("D:\\Work\\code\\Crop_image\\{}".format(name),im2)
+    cv2.imwrite("D:\\iris_project\\Crop_image\\{}".format(name),im2)

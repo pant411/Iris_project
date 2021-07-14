@@ -14,7 +14,7 @@ def createFileList(myDir, format='.jpg'):
     fileList.sort()
     return fileList
 
-dir_path = 'Doc\\'
+dir_path = 'D:\\iris_project\\Doc\\'
 fileList = createFileList(dir_path)
 
 methods = ['cv.TM_CCOEFF', 'cv.TM_CCOEFF_NORMED', 'cv.TM_CCORR',
@@ -26,11 +26,11 @@ for files in fileList:
     img2 = img1.copy()
     img3 = cv.imread(files)
     img4 = img3.copy()
-    template1 = cv.imread('logo\\logo1.jpg',0)
-    template2 = cv.imread('logo\\logo2.jpg',0)
-    template3 = cv.imread('logo\\logo3.jpg',0)
-    template4 = cv.imread('logo\\logo4.jpg',0)
-    template5 = cv.imread('logo\\logo5.jpg',0)
+    template1 = cv.imread('D:\\iris_project\\logo\\logo1.jpg',0)
+    template2 = cv.imread('D:\\iris_project\\logo\\logo2.jpg',0)
+    template3 = cv.imread('D:\\iris_project\\logo\\logo3.jpg',0)
+    template4 = cv.imread('D:\\iris_project\\logo\\logo4.jpg',0)
+    template5 = cv.imread('D:\\iris_project\\logo\\logo5.jpg',0)
     w1, h1 = template1.shape
     w2, h2 = template2.shape
     w3, h3 = template3.shape
@@ -88,5 +88,5 @@ for files in fileList:
         cv.rectangle(img3,top_left, bottom_right, (0,255,255),2)
 
 
-        cv.imwrite('result\\{}\\template_result_{}.jpg'.format(meth,name),img3)
+        cv.imwrite('D:\\iris_project\\result\\{}\\template_result_{}.jpg'.format(meth,name),img3)
 

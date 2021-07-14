@@ -13,7 +13,7 @@ def createFileList(myDir, format='.jpg'):
     fileList.sort()
     return fileList
 
-dir_path = 'Doc\\'
+dir_path = 'D:\\iris_project\\Doc\\'
 fileList = createFileList(dir_path)
 
 for files in fileList:
@@ -39,5 +39,5 @@ for files in fileList:
             
     result = cv2.bitwise_not(thresh)
     name = files[4:]
-    cv2.imwrite('remove_stamp_doc\\{}'.format(name), result)
+    cv2.imwrite('D:\\iris_project\\remove_stamp_doc\\{}'.format(name), result)
 
