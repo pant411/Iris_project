@@ -1,0 +1,6 @@
+my_file = open("docs_for_test.txt", "r")
+content = my_file.read()
+content_list = content.split(",")
+my_file.close()    
+print(content_list)
+print(len(content_list))
