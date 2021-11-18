@@ -1,0 +1,3 @@
+from database_update import newdocumentAdd
+
+newdocumentAdd("dummydoc", "หัวข้อ", "คนส่ง", "สังกัดที่ส่ง", "คนรับ", "สังกัดผู้รับ", "เนื้อหา", 2021, 11, 18)
