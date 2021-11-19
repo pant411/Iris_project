@@ -3,7 +3,7 @@ from wordcut import Wordcut
 import pylcs
 import pyuca
 from pythainlp.util import normalize, thai_digit_to_arabic_digit
-from database_update import newdocumentAdd
+#from database_update import newdocumentAdd
 
 def read_text(file):
     #doc = input("file: ")
@@ -283,7 +283,8 @@ def send2db(file):
         if len(x[2]) <= 4:
             year = int(x[2]) - 543
         print(day,month,year)
-        newdocumentAdd("dummydoc", res[1], res[5], res[0], res[2], "สังกัดผู้รับ", "เนื้อหา", x[2], x[1], x[0])
+        #newdocumentAdd("dummydoc", res[1], res[5], res[0], res[2], "สังกัดผู้รับ", "เนื้อหา", x[2], x[1], x[0])
+        return res[0],res[1],res[2],res[5],day,month,year
     except:
         print("ไม่ครบ")
 
