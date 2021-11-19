@@ -104,7 +104,7 @@ def makeDay(day, month, year):
 #ถ้า ไม่ระบุวันหรือเดือนไม่ต้องใส่ ในช่อง day หรือ month
 def addDocument(filename, name, day = 0, month = 0, year = 0 , content = "Not found"):
   try:
-    if (day != 0) and (month != 0):
+    if (day != 0) and (month != 0) and (year != 0):
       date = makeDay(day, month, year)
       #print(date)
       sql = "INSERT INTO Document (filename, name, date, day, month, year, content) VALUES (%s, %s, %s, %s, %s, %s, %s)"
