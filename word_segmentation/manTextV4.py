@@ -244,7 +244,7 @@ def count_score(file):
     print(f'วันที่: {wordcut.tokenize(res[4])} find->{score_result[4]} total->{score_full[4]}')
     print(f'คนเช็น: {wordcut.tokenize(res[5])} find->{score_result[5]} total->{score_full[5]}')
 
-def send2db(file, write_txt=False):
+def send2db(file):
     res = main_mantext(file)
     _TH_FULL_MONTHS = {
     "มกราคม": 1,
