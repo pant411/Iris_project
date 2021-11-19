@@ -1,2 +1,4 @@
 wordcutpy == 0.1.2
 pylcs == 0.0.6
+pyuca
+pythainlp
