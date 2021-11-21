@@ -114,7 +114,7 @@ def main_mantext(file):
         inline.append('\n')
         lock_store = True  # สถานะการเก็บข้อมูลลงlist
         op = -1
-        # print(line)
+        #print(inline)
         for ele in inline:
             candidate = pylcs.lcs_of_list(ele, keyword)
             chosen = max(candidate)
@@ -123,7 +123,7 @@ def main_mantext(file):
                 if len('บันทึกข้อความ') - pylcs.lcs("บันทึกข้อความ", ele) <= 3:
                     select_list_org = 1  # use org
                     status_select_org = False
-            if (abs(len(keyword[indexOFchosen]) - chosen) <= 2) or '\n' in ele or ele in keyword:
+            if (abs(len(keyword[indexOFchosen]) - chosen) <= 2 and abs(len(keyword[indexOFchosen]) - chosen) >= 0) or '\n' in ele or ele in keyword:
                 if (lock_store == False and line_no > 0) or '\n' in ele:
                     org, tel, topic, toUser, byUser, date, no = store_tag(
                         op, res, org, tel, topic, toUser, byUser, date, no)
@@ -224,8 +224,8 @@ def count_score(file):
     score_result = [0, 0, 0, 0, 0, 0]
     score_full = []
     for i in range(6):
-        res[i] = add_space(res[i])
-        it = wordcut.tokenize(res[i])
+        res[i] = add_space(normalize(res[i]))
+        it = wordcut.tokenize(normalize(res[i]))
         space = 0
         for wc in it:
             if wc == ' ' or wc == '  ' or wc == '   ' or wc == '    ' or wc == '     ':
@@ -287,6 +287,7 @@ def send2db(file):
         return res[0],res[1],res[2],res[5],day,month,year
     except:
         print("ไม่ครบ")
+        return res[0],res[1],res[2],res[5],0,0,0
 
 def display(file, write_txt=False):
     res = main_mantext(file)
