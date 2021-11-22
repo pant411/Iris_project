@@ -5,7 +5,7 @@ mydb = mysql.connector.connect(
   host="localhost",
   user="ppunn",
   password="ppunn-password",
-  database="ppunn_Document"
+  database="ppunn_ocr_database"
   )
 mycursor = mydb.cursor()
 
@@ -91,13 +91,13 @@ def makeDay(day, month, year):
   return uyear + "-" + umonth + "-" + uday
 
 #ถ้า ไม่ระบุวันหรือเดือนไม่ต้องใส่ ในช่อง day หรือ month
-def addDocument(filename, name, day = 0, month = 0, year = 0 , content = "Not found"):
+def addDocument(filename, name, day = 0, month = 0, year = 0 , content = "Not found", people = "No one"):
   try:
     if (day != 0) and (month != 0):
       date = makeDay(day, month, year)
       #print(date)
-      sql = "INSERT INTO Document (filename, name, date, day, month, year, content) VALUES (%s, %s, %s, %s, %s, %s, %s)"
-      val = (filename, name, date, day, month, year, content)
+      sql = "INSERT INTO Document (filename, name, date, day, month, year, content, person_in_document) VALUES (%s, %s, %s, %s, %s, %s, %s, %s)"
+      val = (filename, name, date, day, month, year, content, people)
       mycursor.execute(sql, val)
 
       mydb.commit()
@@ -106,8 +106,8 @@ def addDocument(filename, name, day = 0, month = 0, year = 0 , content = "Not fo
       print("Document ID number = ",mycursor.lastrowid)
     else:
       if month == 0:
-        sql = "INSERT INTO Document (filename, name, year, content) VALUES (%s, %s, %s, %s)"
-        val = (filename, name, year, content)
+        sql = "INSERT INTO Document (filename, name, year, content, person_in_document) VALUES (%s, %s, %s, %s, %s)"
+        val = (filename, name, year, content, people)
         mycursor.execute(sql, val)
 
         mydb.commit()
@@ -115,8 +115,8 @@ def addDocument(filename, name, day = 0, month = 0, year = 0 , content = "Not fo
         print(mycursor.rowcount, "record inserted.")
         print("Document ID number = ",mycursor.lastrowid)
       else:
-        sql = "INSERT INTO Document (filename, name, month, year, content) VALUES (%s, %s, %s, %s, %s)"
-        val = (filename, name, month, year, content)
+        sql = "INSERT INTO Document (filename, name, month, year, content, person_in_document) VALUES (%s, %s, %s, %s, %s, %s)"
+        val = (filename, name, month, year, content, people)
         mycursor.execute(sql, val)
 
         mydb.commit()
@@ -218,9 +218,9 @@ def makethemback(mode, DocID):
   return -1
 
 
-def newdocumentAdd(filename, topicname, sender, senderunit, recipent, recipentunit, content, year, month ,day = 0):
+def newdocumentAdd(filename, topicname, sender, senderunit, recipent, recipentunit, content, people, year, month ,day = 0):
   try:
-    DocID = addDocument(filename, topicname, day, month, year, content)
+    DocID = addDocument(filename, topicname, day, month, year, content, people)
     if DocID == -1:
       return -1
     SenderUnitID = searchoraddUnit(senderunit)
