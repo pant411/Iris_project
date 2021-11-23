@@ -39,7 +39,7 @@ for files in fileList:
 
     im2 = img.copy()
 
-    file = open("D:\\iris_project\\massure\\Doc\\resultxt1\\{}.txt".format(txtname), "w+",encoding ="utf-8")
+    file = open("D:\\iris_project\\massure\\Doc\\resultxt3\\{}.txt".format(txtname), "w+",encoding ="utf-8")
     file.write("")
     file.close()
 
@@ -56,7 +56,7 @@ for files in fileList:
             
             cropped = im2[y:y + h, x:x + w]
             
-            file = open("D:\\iris_project\\massure\\Doc\\resultxt1\\{}.txt".format(txtname), "a",encoding ="utf-8")
+            file = open("D:\\iris_project\\massure\\Doc\\resultxt3\\{}.txt".format(txtname), "a",encoding ="utf-8")
             
             text = pytesseract.image_to_string(cropped,config=custom_config)
             

@@ -1,6 +1,9 @@
 #!/usr/bin/env python 
 # -*- coding:utf-8 -*-
 import os
+import gspread
+from oauth2client.service_account import ServiceAccountCredentials
+from pprint import pprint
 
 def Average(lst):
     return sum(lst) / len(lst)
@@ -34,6 +37,14 @@ def createFileList(myDir, format='.txt'):
     return fileList
 
 def main():
+
+    scope = ["https://spreadsheets.google.com/feeds",'https://www.googleapis.com/auth/spreadsheets',"https://www.googleapis.com/auth/drive.file","https://www.googleapis.com/auth/drive"]
+    cerds = ServiceAccountCredentials.from_json_keyfile_name("credentials.json", scope)
+    client = gspread.authorize(cerds)
+    sheet1 = client.open("accuracy report").worksheet('Longest Common Substring(1)')
+    sheet2 = client.open("accuracy report").worksheet('Longest Common Substring(2)')
+    row = 2
+
     corection1 = []
     corection2 = []
     trash1 = []
@@ -45,21 +56,31 @@ def main():
     for files in fileList:
         name = files[length:]
         print(name)
-        #make real word similar to result
+        #name
+        sheet1.update_cell(row,1,name)
+        sheet2.update_cell(row,1,name)
+    
         
         text1 = (open(files,encoding="utf8")).read()
-     
+        #real
+        #sheet1.update_cell(row,2,text1)
+        #sheet2.update_cell(row,2,text1)
+
         result_file = open("D:\\iris_project\\massure\\Doc\\resultxt1\\{}".format(name),"r",encoding="utf8")
         text2 = ""
         for word in result_file:
             text2 += word
         result_file.close()
+        #predict1
+        #sheet1.update_cell(row,3,text2)
 
         new_file = open("D:\\iris_project\\massure\\Doc\\resultxt2\\{}".format(name),"r",encoding="utf8")
         text3 = ""
         for word in new_file:
             text3 += word
         new_file.close()
+        #predict2
+        #sheet2.update_cell(row,3,text3)
 
         print("-------------------------------------------------------------------------------")
         print(text1)
@@ -88,6 +109,26 @@ def main():
         corection2.append(lcs(text1,text3)/len(text1)*100)
         trash1.append((len(text2)-len(text1))/len(text1)*100)
         trash2.append((len(text3)-len(text1))/len(text1)*100)
+        #len_LCS
+        sheet1.update_cell(row,2,lcs(text1,text2))
+        sheet2.update_cell(row,2,lcs(text1,text3))
+        #len_Real
+        sheet1.update_cell(row,3,len(text1))
+        sheet2.update_cell(row,3,len(text1))
+        #len_Predict
+        sheet1.update_cell(row,4,len(text2))
+        sheet2.update_cell(row,4,len(text3))
+        #unwanted
+        #len_unwanted
+        sheet1.update_cell(row,5,(len(text2)-len(text1)))
+        sheet2.update_cell(row,5,(len(text3)-len(text1)))
+        #trash
+        sheet1.update_cell(row,6,(len(text2)-len(text1))/len(text1)*100)
+        sheet2.update_cell(row,6,(len(text3)-len(text1))/len(text1)*100)
+        #correction
+        sheet1.update_cell(row,7,lcs(text1,text2)/len(text1)*100)
+        sheet2.update_cell(row,7,lcs(text1,text3)/len(text1)*100)
+        row = row + 1
 
     
     file = open("D:\\iris_project\\massure\\Doc\\result.txt", "w+",encoding="utf-8")
