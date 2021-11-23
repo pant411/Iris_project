@@ -118,7 +118,7 @@ def main_mantext(file):
         inline.append('\n')
         lock_store = True  # สถานะการเก็บข้อมูลลงlist
         op = -1
-        #print(inline)
+        print(inline)
         find_key = 0
         for ele in inline:
             candidate = pylcs.lcs_of_list(ele, keyword)
@@ -132,7 +132,7 @@ def main_mantext(file):
                     status_select_org = False
             if abs(len(keyword[indexOFchosen]) - chosen) <= 2 or '\n' in ele or ele in keyword:
                 find_key += 1
-                if (lock_store == False and line_no > 0 and (find_key == 1 or indexOFchosen == 5 or op == 5)) or '\n' in ele:
+                if (lock_store == False and line_no > 0 and (find_key == 1 or indexOFchosen == 5 or op == 5 or (op == 7 and (" " in ele or "\n" in ele)))) or '\n' in ele:
                     org, tel, topic, toUser, byUser, date, no = store_tag(op, res, org, tel, topic, toUser, byUser, date, no)
                     res = ''
                     lock_store = True
