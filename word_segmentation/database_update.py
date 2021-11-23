@@ -5,7 +5,7 @@ mydb = mysql.connector.connect(
   host="localhost",
   user="ppunn",
   password="ppunn-password",
-  database="ppunn_Document"
+  database="ppunn_ocr_database"
   )
 mycursor = mydb.cursor()
 
@@ -16,19 +16,30 @@ def addUnit(Name, Telephone, Parent):
     keyword = (Parent,)
     mycursor.execute(search, keyword)
     myresult = mycursor.fetchall()
-    #print(type(myresult))
+    print(type(myresult))
     #for x in myresult:
-      #print(type(x))
-      #print(x)
+    #  print(type(x))
+    #  print(x)
     if len(myresult) == 0:
-      sql = "INSERT INTO Unit (Name, Telephone, Typeedit) VALUES (%s, %s, %s)"
-      val = (Name, Telephone, "ComputerEdit")
-      mycursor.execute(sql, val)
+      if Telephone != "-":
+        #print("it zero")
+        sql = "INSERT INTO Unit (Name, Telephone, Typeedit) VALUES (%s, %s, %s)"
+        val = (Name, Telephone, "ComputerEdit")
+        mycursor.execute(sql, val)
 
-      mydb.commit()
+        mydb.commit()
 
-      print(mycursor.rowcount, "record inserted.")
-      print("ID number = ", mycursor.lastrowid)
+        print(mycursor.rowcount, "record inserted.")
+        print("ID number = ", mycursor.lastrowid)
+      else:
+        sql = "INSERT INTO Unit (Name, Typeedit) VALUES (%s, %s)"
+        val = (Name, "ComputerEdit")
+        mycursor.execute(sql, val)
+
+        mydb.commit()
+
+        print(mycursor.rowcount, "record inserted.")
+        print("ID number = ", mycursor.lastrowid)
     else:
       sql = "INSERT INTO Unit (Name, Telephone, ParentID, Typeedit) VALUES (%s, %s, %s, %s)"
       val = (Name, Telephone, (myresult[0])[1], "ComputerEdit")
@@ -93,7 +104,7 @@ def makeDay(day, month, year):
 #ถ้า ไม่ระบุวันหรือเดือนไม่ต้องใส่ ในช่อง day หรือ month
 def addDocument(filename, name, day = 0, month = 0, year = 0 , content = "Not found"):
   try:
-    if (day != 0) and (month != 0):
+    if (day != 0) and (month != 0) and (year != 0):
       date = makeDay(day, month, year)
       #print(date)
       sql = "INSERT INTO Document (filename, name, date, day, month, year, content) VALUES (%s, %s, %s, %s, %s, %s, %s)"
@@ -165,9 +176,11 @@ def searchoraddUnit(unitname):
     keyword = (unitname,)
     mycursor.execute(search, keyword)
     myresult = mycursor.fetchall()
+    for i in myresult:
+      print(i)
     if len(myresult) == 0:
       #ตอนนี้ยังลังเลว่าถ้ามี telephone ใส่มาเลยอาจจะใส่เบอร์ได้ 
-      return addUnit(unitname, "insertifyoucan", "-")
+      return addUnit(unitname, "-", "-")
     else:
       #คืนผลค้นหาแรก
       return (myresult[0])[1]
@@ -265,6 +278,6 @@ def newdocumentAdd(filename, topicname, sender, senderunit, recipent, recipentun
   except:
     return -1
 #ทำเคส error ด้วย  
-#print(newdocumentAdd("wtf16", "ทดสอบ + เพิ่มแท็ก ครั้งที่เท่าไหร่หลังอัพเดท", "มิว", "แลปปริศนาหมายเลข1", "top", "แลปปริศนาหมายเลข2", "ได้เหอะขอล่ะ" ,2021, 8, 8))
+#print(newdocumentAdd("wtf178", "ทดสอบ + เพิ่มแท็ก ครั้งที่เท่าไหร่หลังอัพเดท", "นาย", "ทำอะไำ", "top", "แลปปริศนาหมายเลข2", "ได้เหอะขอล่ะ" ,2021, 11, 11))
 #addDocument("te3t", "te3st", 0 , 5, 2021, "bah")
 #print(makethemback(6, 13))

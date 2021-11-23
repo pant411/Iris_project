@@ -3,6 +3,7 @@ from wordcut import Wordcut
 import pylcs
 import pyuca
 from pythainlp.util import normalize, thai_digit_to_arabic_digit
+import re
 #from database_update import newdocumentAdd
 
 def read_text(file):
@@ -13,6 +14,7 @@ def read_text(file):
 def read_dict(choose="dict.txt"):
     with open(choose, encoding="UTF-8") as dict_file:
         dict_file2 = sorted(dict_file, key=pyuca.Collator().sort_key)
+        #print([w.rstrip() for w in dict_file2])
         word_list = list(set([w.rstrip() for w in dict_file2]))
         wordcut = Wordcut(word_list)
     #print([w.rstrip() for w in dict_file2])
@@ -106,6 +108,8 @@ def main_mantext(file):
     wordcut = read_dict()
     select_list_org = -1
     status_select_org = True
+    list_of_month = ["มกราคม","กุมภาพันธ์","มีนาคม","เมษายน","พฤษภาคม","มิถุนายน","กรกฎาคม","สิงหาคม","กันยายน","ตุลาคม","พฤศจิกายน","ธันวาคม"]
+    date2 = []
     for line in data.readlines():
         res = ''
         tag1 = org_tag(line, tag1)
@@ -114,41 +118,50 @@ def main_mantext(file):
         inline.append('\n')
         lock_store = True  # สถานะการเก็บข้อมูลลงlist
         op = -1
-        #print(inline)
+        print(inline)
+        find_key = 0
         for ele in inline:
             candidate = pylcs.lcs_of_list(ele, keyword)
             chosen = max(candidate)
             indexOFchosen = candidate.index(chosen)
+            #print("ele:",ele)
+            #print("indexOFchosen:",indexOFchosen)
             if select_list_org == -1 and status_select_org:
                 if len('บันทึกข้อความ') - pylcs.lcs("บันทึกข้อความ", ele) <= 3:
                     select_list_org = 1  # use org
                     status_select_org = False
-            if (abs(len(keyword[indexOFchosen]) - chosen) <= 2 and abs(len(keyword[indexOFchosen]) - chosen) >= 0) or '\n' in ele or ele in keyword:
-                if (lock_store == False and line_no > 0) or '\n' in ele:
-                    org, tel, topic, toUser, byUser, date, no = store_tag(
-                        op, res, org, tel, topic, toUser, byUser, date, no)
+            if abs(len(keyword[indexOFchosen]) - chosen) <= 2 or '\n' in ele or ele in keyword:
+                find_key += 1
+                if (lock_store == False and line_no > 0 and (find_key == 1 or indexOFchosen == 5 or op == 5 or (op == 7 and (" " in ele or "\n" in ele)))) or '\n' in ele:
+                    org, tel, topic, toUser, byUser, date, no = store_tag(op, res, org, tel, topic, toUser, byUser, date, no)
                     res = ''
                     lock_store = True
-                if lock_store == True and '\n' not in ele:
+                    continue
+                if lock_store == True and '\n' not in ele and (find_key == 1 or indexOFchosen == 5 or op == 5):
                     op = select_tag(indexOFchosen)
                     lock_store = False
+                    continue
                 line_no += 1
-                continue
             if lock_store == False and ele != ')':
                 if ('ดร' in ele or 'ดร.' in ele or 'ตร.' in ele or 'ตร' in ele or ele == ' ') and (op == 7 or op == 4):
                     continue
                 res = res + ele
                 if (op == 7 or op == 4):
                     res += ' '
+            if ele in list_of_month:
+                posMonth = inline.index(ele)
+                #print(inline[posMonth-2],inline[posMonth],inline[posMonth+1])
+                date2.append(thai_digit_to_arabic_digit(inline[posMonth-2]+' '+inline[posMonth]+' '+inline[posMonth+1]))
+            #print("find_key:",find_key)
         line_no += 1
-    #print(f'org: {org}')
-    #print(f'topic: {topic}')
-    #print(f'toUser: {toUser}')
-    #print(f'byUser: {byUser}')
+    print(f'org: {org}')
+    print(f'topic: {topic}')
+    print(f'toUser: {toUser}')
+    print(f'byUser: {byUser}')
     #print(f'tel: {tel}')
     print(f'date: {date}')
     #print(f'no: {no}')
-    #print(f'tag1: {tag1}')
+    print(f'tag1: {tag1}')
     # print(org[0],topic[0],toUser[0],tel[0],date[0])
     #print(f'select {select_list_org}')
     select_org = []
@@ -180,7 +193,7 @@ def main_mantext(file):
     #print(f'วันที่ี: {date[0]}')
     #print(f'คนเช็น: {byUser[-1]}')
     #print(f'ที่: {no[0]}')
-    return [select_org[index_org], topic[0], toUser[0], tel[0], date[0], byUser[-1]]
+    return [select_org[index_org], topic[0], toUser[0], tel[0], date2[0], byUser[-1]]
 
 def write_txt(inPut, file):
     with open('file_txt/a_'+file+'.txt', 'w') as f:
@@ -274,14 +287,24 @@ def send2db(file):
     try:
         print(x[0],x[1],x[2])
         month = _TH_FULL_MONTHS[x[1]]
-        if int(x[0]) >= 1 and int(x[0]) <= 31 and (month == 1 or month == 3 or month == 5 or month == 7 or month == 8 or month == 10 or month == 12):
-            day = int(x[0])
-        elif int(x[0]) >= 1 and int(x[0]) <= 30 and (month == 4 or month == 6 or month == 9 or month == 11):
-            day = int(x[0])
-        elif int(x[0]) >= 1 and int(x[0]) <= 29 and month == 2:
-            day = int(x[0])
-        if len(x[2]) <= 4:
-            year = int(x[2]) - 543
+        if x[0].isnumeric():
+            if int(x[0]) >= 1 and int(x[0]) <= 31 and (month == 1 or month == 3 or month == 5 or month == 7 or month == 8 or month == 10 or month == 12):
+                day = int(x[0])
+            elif int(x[0]) >= 1 and int(x[0]) <= 30 and (month == 4 or month == 6 or month == 9 or month == 11):
+                day = int(x[0])
+            elif int(x[0]) >= 1 and int(x[0]) <= 29 and month == 2:
+                day = int(x[0])
+            else:
+                day = 0
+        else:
+            day = 0
+        if x[2].isnumeric():
+            if len(x[2]) <= 4:
+                year = int(x[2]) - 543
+            else:
+                year = 0
+        else:
+            year = 0
         print(day,month,year)
         #newdocumentAdd("dummydoc", res[1], res[5], res[0], res[2], "สังกัดผู้รับ", "เนื้อหา", x[2], x[1], x[0])
         return res[0],res[1],res[2],res[5],day,month,year
