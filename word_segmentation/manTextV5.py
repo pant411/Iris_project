@@ -113,7 +113,7 @@ def org_tag(ele, tag1):
 
 
 def main_mantext(file):
-    data = read_text2(file)
+    data = read_text(file)
     keyword = read_keyword()
     line_no = 0
     # org=ส่วนงานหรือส่วนราชการ tel=เบอร์โทร topic=เรื่อง toUser=เรียน byUser=คนเซ็น date=วันที่ no=ที่ศธ
