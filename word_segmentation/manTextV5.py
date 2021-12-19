@@ -26,7 +26,7 @@ def read_dict(choose="dict.txt"):
         word_list = list(set([w.rstrip() for w in dict_file2]))
         wordcut = Wordcut(word_list)
     #print([w.rstrip() for w in dict_file2])
-    return wordcut
+    return wordcut,word_list
 
 
 def select_tag(indexOFchosen):
@@ -42,19 +42,19 @@ def select_tag(indexOFchosen):
 def store_tag(op, text, org, tel, topic, toUser, byUser, date, no):
     text = normalize(text)
     text = thai_digit_to_arabic_digit(text)
-    if op == 1:
+    if op == 1 and text != '':
         org.append(text)
-    elif op == 2:
+    elif op == 2 and text != '':
         topic.append(text)
-    elif op == 3:
+    elif op == 3 and text != '':
         toUser.append(text)
-    elif op == 4:
+    elif op == 4 and text != '':
         date.append(text)
-    elif op == 5:
+    elif op == 5 and text != '':
         tel.append(text)
-    elif op == 6:
+    elif op == 6 and text != '':
         no.append(text)
-    elif op >= 7:
+    elif op >= 7 and text != '':
         byUser.append(text)
     return org, tel, topic, toUser, byUser, date, no
 
@@ -119,7 +119,8 @@ def main_mantext(file):
     # org=ส่วนงานหรือส่วนราชการ tel=เบอร์โทร topic=เรื่อง toUser=เรียน byUser=คนเซ็น date=วันที่ no=ที่ศธ
     org, tel, topic, toUser, byUser, date, no = [], [], [], [], [], [], []
     tag1 = []  # tag1=tagสถานที่
-    wordcut = read_dict()
+    wordcut,wordcutlist = read_dict()
+    wordcut22,wordcutlist22 = read_dict(choose="dictPeople.txt")
     select_list_org = -1
     status_select_org = True
     list_of_month = ["มกราคม", "กุมภาพันธ์", "มีนาคม", "เมษายน", "พฤษภาคม",
@@ -148,8 +149,7 @@ def main_mantext(file):
             if abs(len(keyword[indexOFchosen]) - chosen) <= 2 or '\n' in ele or ele in keyword:
                 find_key += 1
                 if (lock_store == False and line_no > 0 and (find_key == 1 or indexOFchosen == 5 or op == 5 or (op == 7 and (" " in ele or "\n" in ele)))) or '\n' in ele:
-                    org, tel, topic, toUser, byUser, date, no = store_tag(
-                        op, res, org, tel, topic, toUser, byUser, date, no)
+                    org, tel, topic, toUser, byUser, date, no = store_tag(op, res, org, tel, topic, toUser, byUser, date, no)
                     res = ''
                     lock_store = True
                     continue
@@ -159,7 +159,13 @@ def main_mantext(file):
                     continue
                 line_no += 1
             if lock_store == False and ele != ')':
-                if ('ดร' in ele or 'ดร.' in ele or 'ตร.' in ele or 'ตร' in ele or ele == ' ') and (op == 7 or op == 4):
+                if ('ดร' in ele or 'ดร.' in ele or 'ตร.' in ele or 'ตร' in ele or ele == ' ' or 'นาย' in ele or 'นาง' in ele or 'นางสาว' in ele) and (op == 7 or op == 4):
+                    continue
+                match_name = pylcs.lcs_of_list(ele, wordcutlist22)
+                max_match_name = max(match_name)
+                if abs(len(ele)-max_match_name) > 4 and op >= 7: 
+                    continue
+                if (re.findall("[-+*.|()${}]",ele) or re.compile(r'^[ะา]').search(ele) or len(ele) == 1) and op >= 7:
                     continue
                 res = res + ele
                 if (op == 7 or op == 4):
@@ -167,8 +173,7 @@ def main_mantext(file):
             if ele in list_of_month:
                 posMonth = inline.index(ele)
                 # print(inline[posMonth-2],inline[posMonth],inline[posMonth+1])
-                date2.append(thai_digit_to_arabic_digit(
-                    inline[posMonth-2]+' '+inline[posMonth]+' '+inline[posMonth+1]))
+                date2.append(thai_digit_to_arabic_digit(inline[posMonth-2]+' '+inline[posMonth]+' '+inline[posMonth+1]))
             # print("find_key:",find_key)
         line_no += 1
     print(f'org: {org}')
@@ -270,18 +275,12 @@ def count_score(file):
     # print(res)
     # print(score_result)
     # print(score_full)
-    print(
-        f'ส่วนราชการ หรือ ส่วนงาน: {wordcut.tokenize(res[0])} find->{score_result[0]} total->{score_full[0]}')
-    print(
-        f'เรื่อง: {wordcut.tokenize(res[1])} find->{score_result[1]} total->{score_full[1]}')
-    print(
-        f'เรียน: {wordcut.tokenize(res[2])} find->{score_result[2]} total->{score_full[2]}')
-    print(
-        f'โทร: {wordcut.tokenize(res[3])} find->{score_result[3]} total->{score_full[3]}')
-    print(
-        f'วันที่: {wordcut.tokenize(res[4])} find->{score_result[4]} total->{score_full[4]}')
-    print(
-        f'คนเช็น: {wordcut.tokenize(res[5])} find->{score_result[5]} total->{score_full[5]}')
+    print(f'ส่วนราชการ หรือ ส่วนงาน: {wordcut.tokenize(res[0])} find->{score_result[0]} total->{score_full[0]}')
+    print(f'เรื่อง: {wordcut.tokenize(res[1])} find->{score_result[1]} total->{score_full[1]}')
+    print(f'เรียน: {wordcut.tokenize(res[2])} find->{score_result[2]} total->{score_full[2]}')
+    print(f'โทร: {wordcut.tokenize(res[3])} find->{score_result[3]} total->{score_full[3]}')
+    print(f'วันที่: {wordcut.tokenize(res[4])} find->{score_result[4]} total->{score_full[4]}')
+    print(f'คนเช็น: {wordcut.tokenize(res[5])} find->{score_result[5]} total->{score_full[5]}')
 
 
 def send2db(file):
