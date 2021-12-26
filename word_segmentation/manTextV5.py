@@ -180,8 +180,8 @@ def main_mantext(file):
     print(f'topic: {topic}')
     print(f'toUser: {toUser}')
     print(f'byUser: {byUser}')
-    #print(f'tel: {tel}')
-    print(f'date: {date}')
+    print(f'tel: {tel}')
+    print(f'date: {date2}')
     #print(f'no: {no}')
     print(f'tag1: {tag1}')
     # print(org[0],topic[0],toUser[0],tel[0],date[0])
@@ -204,8 +204,8 @@ def main_mantext(file):
         byUser.append("ไม่พบข้อมูล")
     if len(tel) == 0:
         tel.append("ไม่พบข้อมูล")
-    if len(date) == 0:
-        date.append("ไม่พบข้อมูล")
+    if len(date2) == 0:
+        date2.append("ไม่พบข้อมูล")
     if len(no) == 0:
         no.append("ไม่พบข้อมูล")
     #print(f'ส่วนราชการ หรือ ส่วนงาน: {select_org[index_org]}')

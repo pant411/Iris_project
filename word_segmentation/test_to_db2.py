@@ -17,4 +17,4 @@ for ele in dir_list:
     if ele in cutfile:
         continue
     res0, res1, res2, res5, day, month, year = send2db(ele)
-    newdocumentAdd("/~amstel/download/"+ele+".pdf", res1, res5, res0, res2, "สังกัดผู้รับ", "เนื้อหา", year, month, day)
+    newdocumentAdd("/~amstel/download/pdf/"+ele+".pdf", res1, res5, res0, res2, "สังกัดผู้รับ", "เนื้อหา", year, month, day)
