@@ -5,7 +5,8 @@ import pyuca
 from pythainlp.util import normalize, thai_digit_to_arabic_digit
 import re
 #from database_update import newdocumentAdd
-
+from pythainlp.corpus import thai_stopwords
+stopwords = list(thai_stopwords())
 
 def read_text(file):
     #doc = input("file: ")
@@ -165,7 +166,9 @@ def main_mantext(file):
                 max_match_name = max(match_name)
                 if abs(len(ele)-max_match_name) > 4 and op >= 7: 
                     continue
-                if (re.findall("[-+*.|()${}]",ele) or re.compile(r'^[ะา]').search(ele) or len(ele) == 1) and op >= 7:
+                if (re.findall("[-+*.|()${}]:",ele) or re.compile(r'^[ะา]').search(ele) or len(ele) == 1) and op >= 7:
+                    continue
+                if ele in stopwords and op >= 7:
                     continue
                 res = res + ele
                 if (op == 7 or op == 4):
