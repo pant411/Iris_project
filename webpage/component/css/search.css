@@ -1,0 +1,16 @@
+@import "lastest.css";
+@import "searchbox.css";
+
+body{
+    background-color: #7FE39F ;
+}
+
+.resultlab{
+    background-color: white;
+    width: 90%;
+    margin: 2%;
+    margin-left: 50%;
+    border-radius: 1vw;
+    padding: 2%;
+    transform: translateX(-50%);
+}
