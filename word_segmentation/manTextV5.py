@@ -119,6 +119,7 @@ def main_mantext(file):
     list_of_month = ["มกราคม", "กุมภาพันธ์", "มีนาคม", "เมษายน", "พฤษภาคม",
                      "มิถุนายน", "กรกฎาคม", "สิงหาคม", "กันยายน", "ตุลาคม", "พฤศจิกายน", "ธันวาคม"]
     date2 = []
+    text = ''
     for line in data.readlines():
         res = ''
         tag1 = org_tag(line, tag1)
@@ -127,7 +128,7 @@ def main_mantext(file):
         inline.append('\n')
         lock_store = True  # สถานะการเก็บข้อมูลลงlist
         op = -1
-        print(inline)
+        text += line
         find_key = 0
         for ele in inline:
             candidate = pylcs.lcs_of_list(ele, keyword)
@@ -212,7 +213,7 @@ def main_mantext(file):
     #print(f'วันที่ี: {date[0]}')
     #print(f'คนเช็น: {byUser[-1]}')
     #print(f'ที่: {no[0]}')
-    return select_org, topic, toUser, tel, date2, byUser
+    return select_org, topic, toUser, tel, date2, byUser, text
 
 def write_txt(inPut, file):
     with open('file_txt/a_'+file+'.txt', 'w') as f:
@@ -283,7 +284,7 @@ def count_score(file):
 
 def send2db(file):
     try:
-        select_org, topic, toUser, tel, date2, byUser = main_mantext(file)
+        select_org, topic, toUser, tel, date2, byUser, text = main_mantext(file)
         _TH_FULL_MONTHS = {
             "มกราคม": 1,
             "กุมภาพันธ์": 2,
@@ -333,17 +334,17 @@ def send2db(file):
                 year = 0
             print(day, month, year)
             #newdocumentAdd("dummydoc", res[1], res[5], res[0], res[2], "สังกัดผู้รับ", "เนื้อหา", x[2], x[1], x[0])
-            return select_org[0], topic[0], toUser[0], byUser[-1], day, month, year
+            return select_org[0], topic[0], toUser[0], byUser[-1], day, month, year, text
         except:
             print("ไม่ครบ")
-            return select_org[0], topic[0], toUser[0], byUser[-1], 0, 0, 0
+            return select_org[0], topic[0], toUser[0], byUser[-1], 0, 0, 0, text
     except:
         print("exit!!!")
 
 def display_list(file):
-    select_org, topic, toUser, tel, date2, byUser = main_mantext(file)
+    select_org, topic, toUser, tel, date2, byUser, text = main_mantext(file)
     try:
-        return select_org, topic, toUser, byUser, date2
+        return select_org, topic, toUser, byUser, date2, text
     except:
         print("error")
 
