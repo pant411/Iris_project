@@ -112,7 +112,7 @@ def main_mantext(file):
     # org=ส่วนงานหรือส่วนราชการ tel=เบอร์โทร topic=เรื่อง toUser=เรียน byUser=คนเซ็น date=วันที่ no=ที่ศธ
     org, tel, topic, toUser, byUser, date, no = [], [], [], [], [], [], []
     tag1 = []  # tag1=tagสถานที่
-    wordcut, wordcutlist = read_dict()
+    wordcut, wordcutlist = read_dict("bigthai.txt")
     wordcut22, wordcutlist22 = read_dict(choose="dictPeople.txt")
     select_list_org = -1
     status_select_org = True
