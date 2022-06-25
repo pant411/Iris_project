@@ -8,18 +8,15 @@ import re
 from pythainlp.corpus import thai_stopwords
 stopwords = list(thai_stopwords())
 
-
 def read_text(file):
     #doc = input("file: ")
     data = open("docs_for_test/{}.txt".format(file), "r")
     return data
 
-
 def read_text2(file):
     #doc = input("file: ")
     data = open("docs_source/{}.txt".format(file), "r")
     return data
-
 
 def read_dict(choose="bigthai.txt"):
     with open(choose, encoding="UTF-8") as dict_file:
@@ -30,7 +27,6 @@ def read_dict(choose="bigthai.txt"):
     #print([w.rstrip() for w in dict_file2])
     return wordcut, word_list
 
-
 def select_tag(indexOFchosen):
     if indexOFchosen <= 1:
         op = 1  # store in org
@@ -39,7 +35,6 @@ def select_tag(indexOFchosen):
     else:
         op = indexOFchosen
     return op
-
 
 def store_tag(op, text, org, tel, topic, toUser, byUser, date, no):
     text = normalize(text)
@@ -60,7 +55,6 @@ def store_tag(op, text, org, tel, topic, toUser, byUser, date, no):
         byUser.append(text)
     return org, tel, topic, toUser, byUser, date, no
 
-
 def read_keyword():
     my_file = open("keyword.txt", "r")
     content = my_file.read()
@@ -68,14 +62,12 @@ def read_keyword():
     my_file.close()
     return content_list
 
-
 def read_key(file):
     my_file = open(f"docs_source/{file}_key.txt", "r")
     content = my_file.read()
     content_list = content.split(",")
     my_file.close()
     return content_list
-
 
 def org_tag(ele, tag1):
     x_tag1 = ele.find('ภาควิชา')
@@ -112,7 +104,6 @@ def org_tag(ele, tag1):
     if res != '':
         tag1.append(res)
     return tag1
-
 
 def main_mantext(file):
     data = read_text(file)
@@ -221,15 +212,13 @@ def main_mantext(file):
     #print(f'วันที่ี: {date[0]}')
     #print(f'คนเช็น: {byUser[-1]}')
     #print(f'ที่: {no[0]}')
-    return [select_org[index_org], topic[0], toUser[0], tel[0], date2[0], byUser[-1]]
-
+    return select_org, topic, toUser, tel, date2, byUser
 
 def write_txt(inPut, file):
     with open('file_txt/a_'+file+'.txt', 'w') as f:
         for line in inPut:
             f.write(line)
             f.write('\n')
-
 
 def test_dict(file):
     res = main_mantext(file)
@@ -242,7 +231,6 @@ def test_dict(file):
     print(wordcut.tokenize(res[3]))
     print(wordcut.tokenize(res[4]))
     print(wordcut.tokenize(res[5]))
-
 
 def add_space(text):
     res = ''
@@ -257,7 +245,6 @@ def add_space(text):
         else:
             res += text[i]
     return res
-
 
 def count_score(file):
     res = main_mantext(file)
@@ -294,10 +281,9 @@ def count_score(file):
     print(
         f'คนเช็น: {wordcut.tokenize(res[5])} find->{score_result[5]} total->{score_full[5]}')
 
-
 def send2db(file):
     try:
-        res = main_mantext(file)
+        select_org, topic, toUser, tel, date2, byUser = main_mantext(file)
         _TH_FULL_MONTHS = {
             "มกราคม": 1,
             "กุมภาพันธ์": 2,
@@ -313,13 +299,13 @@ def send2db(file):
             "ธันวาคม": 12,
         }
         # print(res)
-        print(f'ส่วนราชการ หรือ ส่วนงาน: {res[0]}')
-        print(f'เรื่อง: {res[1]}')
-        print(f'เรียน: {res[2]}')
-        print(f'โทร: {res[3]}')
-        print(f'วันที่: {res[4]}')
-        print(f'คนเช็น: {res[5]}')
-        x = res[4].split(" ")
+        print(f'ส่วนราชการ หรือ ส่วนงาน: {select_org[0]}')
+        print(f'เรื่อง: {topic[0]}')
+        print(f'เรียน: {toUser[0]}')
+        print(f'โทร: {tel[0]}')
+        print(f'วันที่: {date2[0]}')
+        print(f'คนเช็น: {byUser[-1]}')
+        x = date2[0].split(" ")
         day, month, year = 0, 0, 0
         print(x)
         if '' in x:
@@ -347,58 +333,19 @@ def send2db(file):
                 year = 0
             print(day, month, year)
             #newdocumentAdd("dummydoc", res[1], res[5], res[0], res[2], "สังกัดผู้รับ", "เนื้อหา", x[2], x[1], x[0])
-            return res[0], res[1], res[2], res[5], day, month, year
+            return select_org[0], topic[0], toUser[0], byUser[-1], day, month, year
         except:
             print("ไม่ครบ")
-            return res[0], res[1], res[2], res[5], 0, 0, 0
+            return select_org[0], topic[0], toUser[0], byUser[-1], 0, 0, 0
     except:
         print("exit!!!")
 
-
-def display(file, write_txt=False):
-    res = main_mantext(file)
-    _TH_FULL_MONTHS = {
-        "มกราคม": 1,
-        "กุมภาพันธ์": 2,
-        "มีนาคม": 3,
-        "เมษายน": 4,
-        "พฤษภาคม": 5,
-        "มิถุนายน": 6,
-        "กรกฎาคม": 7,
-        "สิงหาคม": 8,
-        "กันยายน": 9,
-        "ตุลาคม": 10,
-        "พฤศจิกายน": 11,
-        "ธันวาคม": 12,
-    }
-    # print(res)
-    print(f'ส่วนราชการ หรือ ส่วนงาน: {res[0]}')
-    print(f'เรื่อง: {res[1]}')
-    print(f'เรียน: {res[2]}')
-    print(f'โทร: {res[3]}')
-    print(f'วันที่: {res[4]}')
-    print(f'คนเช็น: {res[5]}')
-    x = res[4].split(" ")
-    day, month, year = 0, 0, 0
-    print(x)
-    if '' in x:
-        x.remove('')
+def display_list(file):
+    select_org, topic, toUser, tel, date2, byUser = main_mantext(file)
     try:
-        print(x[0], x[1], x[2])
-        month = _TH_FULL_MONTHS[x[1]]
-        if int(x[0]) >= 1 and int(x[0]) <= 31 and (month == 1 or month == 3 or month == 5 or month == 7 or month == 8 or month == 10 or month == 12):
-            day = int(x[0])
-        elif int(x[0]) >= 1 and int(x[0]) <= 30 and (month == 4 or month == 6 or month == 9 or month == 11):
-            day = int(x[0])
-        elif int(x[0]) >= 1 and int(x[0]) <= 29 and month == 2:
-            day = int(x[0])
-        if len(x[2]) <= 4:
-            year = int(x[2]) - 543
-        print(day, month, year)
+        return select_org, topic, toUser, byUser, date2
     except:
-        print("ไม่ครบ")
-    if write_txt:
-        write_txt(res, file)
+        print("error")
 
 # display()
 # main_mantext()
