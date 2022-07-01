@@ -50,7 +50,7 @@ def store_tag(op, text, org, tel, topic, toUser, byUser, date, no):
     elif op == 6 and text != '':
         no.append(text)
     elif op >= 7 and text != '':
-        byUser.append(my_autocorrect(text))
+        byUser.append(my_autocorrect(text).iloc[0]["Word"])
     return org, tel, topic, toUser, byUser, date, no
 
 def read_keyword():
