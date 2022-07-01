@@ -4,7 +4,7 @@ import pylcs
 import pyuca
 from pythainlp.util import normalize, thai_digit_to_arabic_digit
 import re
-#from database_update import newdocumentAdd
+from spell_correcting import my_autocorrect
 from pythainlp.corpus import thai_stopwords
 stopwords = list(thai_stopwords())
 
@@ -50,7 +50,7 @@ def store_tag(op, text, org, tel, topic, toUser, byUser, date, no):
     elif op == 6 and text != '':
         no.append(text)
     elif op >= 7 and text != '':
-        byUser.append(text)
+        byUser.append(my_autocorrect(text))
     return org, tel, topic, toUser, byUser, date, no
 
 def read_keyword():
