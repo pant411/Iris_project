@@ -21,10 +21,8 @@ def read_text2(file):
 def read_dict(choose="bigthai.txt"):
     with open(choose, encoding="UTF-8") as dict_file:
         dict_file2 = sorted(dict_file, key=pyuca.Collator().sort_key)
-        #print([w.rstrip() for w in dict_file2])
         word_list = list(set([w.rstrip() for w in dict_file2]))
         wordcut = Wordcut(word_list)
-    #print([w.rstrip() for w in dict_file2])
     return wordcut, word_list
 
 def select_tag(indexOFchosen):
@@ -134,8 +132,6 @@ def main_mantext(file):
             candidate = pylcs.lcs_of_list(ele, keyword)
             chosen = max(candidate)
             indexOFchosen = candidate.index(chosen)
-            # print("ele:",ele)
-            # print("indexOFchosen:",indexOFchosen)
             if select_list_org == -1 and status_select_org:
                 if len('บันทึกข้อความ') - pylcs.lcs("บันทึกข้อความ", ele) <= 3:
                     select_list_org = 1  # use org
@@ -169,21 +165,9 @@ def main_mantext(file):
                     res += ' '
             if ele in list_of_month:
                 posMonth = inline.index(ele)
-                # print(inline[posMonth-2],inline[posMonth],inline[posMonth+1])
                 date2.append(thai_digit_to_arabic_digit(
                     inline[posMonth-2]+' '+inline[posMonth]+' '+inline[posMonth+1]))
-            # print("find_key:",find_key)
         line_no += 1
-    print(f'org: {org}')
-    print(f'topic: {topic}')
-    print(f'toUser: {toUser}')
-    print(f'byUser: {byUser}')
-    print(f'tel: {tel}')
-    print(f'date: {date2}')
-    #print(f'no: {no}')
-    print(f'tag1: {tag1}')
-    # print(org[0],topic[0],toUser[0],tel[0],date[0])
-    #print(f'select {select_list_org}')
     select_org = []
     if select_list_org == 1:
         if len(org) > 0:
@@ -206,13 +190,6 @@ def main_mantext(file):
         date2.append("ไม่พบข้อมูล")
     if len(no) == 0:
         no.append("ไม่พบข้อมูล")
-    #print(f'ส่วนราชการ หรือ ส่วนงาน: {select_org[index_org]}')
-    #print(f'เรื่อง: {topic[0]}')
-    #print(f'เรียน: {toUser[0]}')
-    #print(f'โทร: {tel[0]}')
-    #print(f'วันที่ี: {date[0]}')
-    #print(f'คนเช็น: {byUser[-1]}')
-    #print(f'ที่: {no[0]}')
     return select_org, topic, toUser, tel, date2, byUser, text
 
 def write_txt(inPut, file):
@@ -266,21 +243,6 @@ def count_score(file):
             if key[i].find(wc) != -1:
                 score_result[i] += 1
         score_full.append(len(it)-space)
-    # print(res)
-    # print(score_result)
-    # print(score_full)
-    print(
-        f'ส่วนราชการ หรือ ส่วนงาน: {wordcut.tokenize(res[0])} find->{score_result[0]} total->{score_full[0]}')
-    print(
-        f'เรื่อง: {wordcut.tokenize(res[1])} find->{score_result[1]} total->{score_full[1]}')
-    print(
-        f'เรียน: {wordcut.tokenize(res[2])} find->{score_result[2]} total->{score_full[2]}')
-    print(
-        f'โทร: {wordcut.tokenize(res[3])} find->{score_result[3]} total->{score_full[3]}')
-    print(
-        f'วันที่: {wordcut.tokenize(res[4])} find->{score_result[4]} total->{score_full[4]}')
-    print(
-        f'คนเช็น: {wordcut.tokenize(res[5])} find->{score_result[5]} total->{score_full[5]}')
 
 def send2db(file):
     try:
@@ -299,7 +261,6 @@ def send2db(file):
             "พฤศจิกายน": 11,
             "ธันวาคม": 12,
         }
-        # print(res)
         print(f'ส่วนราชการ หรือ ส่วนงาน: {select_org[0]}')
         print(f'เรื่อง: {topic[0]}')
         print(f'เรียน: {toUser[0]}')
@@ -308,11 +269,9 @@ def send2db(file):
         print(f'คนเช็น: {byUser[-1]}')
         x = date2[0].split(" ")
         day, month, year = 0, 0, 0
-        print(x)
         if '' in x:
             x.remove('')
         try:
-            print(x[0], x[1], x[2])
             month = _TH_FULL_MONTHS[x[1]]
             if x[0].isnumeric():
                 if int(x[0]) >= 1 and int(x[0]) <= 31 and (month == 1 or month == 3 or month == 5 or month == 7 or month == 8 or month == 10 or month == 12):
@@ -332,7 +291,6 @@ def send2db(file):
                     year = 0
             else:
                 year = 0
-            print(day, month, year)
             #newdocumentAdd("dummydoc", res[1], res[5], res[0], res[2], "สังกัดผู้รับ", "เนื้อหา", x[2], x[1], x[0])
             return select_org[0], topic[0], toUser[0], byUser[-1], day, month, year, text
         except:
