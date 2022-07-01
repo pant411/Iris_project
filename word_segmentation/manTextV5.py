@@ -38,7 +38,7 @@ def store_tag(op, text, org, tel, topic, toUser, byUser, date, no):
     text = normalize(text)
     text = thai_digit_to_arabic_digit(text)
     if op == 1 and text != '':
-        org.append(text)
+        org.append(my_autocorrect(text).iloc[0]["Word"])
     elif op == 2 and text != '':
         topic.append(text)
     elif op == 3 and text != '':
