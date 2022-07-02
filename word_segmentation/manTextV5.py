@@ -38,7 +38,7 @@ def store_tag(op, text, org, tel, topic, toUser, byUser, date, no):
     text = normalize(text)
     text = thai_digit_to_arabic_digit(text)
     if op == 1 and text != '':
-        org.append(my_autocorrect(text).iloc[0]["Word"])
+        org.append(text)
     elif op == 2 and text != '':
         topic.append(text)
     elif op == 3 and text != '':
@@ -77,6 +77,8 @@ def org_tag(ele, tag1):
     x_tag7 = ele.find('สภา')
     x_tag8 = ele.find('สถาน')
     x_tag9 = ele.find('บริษัท')
+    x_tag10 = ele.find('ศูนย์')
+    x_tag11 = ele.find('ฝ่าย')
     res = ''
     if x_tag1 != -1:
         res = ele[x_tag1:len(ele)-1]
@@ -96,6 +98,10 @@ def org_tag(ele, tag1):
         res = ele[x_tag8:len(ele)-1]
     elif x_tag9 != -1:
         res = ele[x_tag9:len(ele)-1]
+    elif x_tag10 != -1:
+        res = ele[x_tag10:len(ele)-1]
+    elif x_tag11 != -1:
+        res = ele[x_tag11:len(ele)-1]
     '''space = res.find(' ')
     if space != -1:
         res = res[:space]'''
@@ -133,10 +139,10 @@ def main_mantext(file):
             chosen = max(candidate)
             indexOFchosen = candidate.index(chosen)
             if select_list_org == -1 and status_select_org:
-                if len('บันทึกข้อความ') - pylcs.lcs("บันทึกข้อความ", ele) <= 3:
+                if pylcs.lcs("บันทึกข้อความ", ele) <= 3:
                     select_list_org = 1  # use org
                     status_select_org = False
-            if abs(len(keyword[indexOFchosen]) - chosen) <= 2 or '\n' in ele or ele in keyword:
+            if (abs(len(keyword[indexOFchosen]) - chosen) >= 0 and abs(len(keyword[indexOFchosen]) - chosen) <= 2) or '\n' in ele or ele in keyword:
                 find_key += 1
                 if (lock_store == False and line_no > 0 and (find_key == 1 or indexOFchosen == 5 or op == 5 or (op == 7 and (" " in ele or "\n" in ele)))) or '\n' in ele:
                     org, tel, topic, toUser, byUser, date, no = store_tag(
@@ -169,13 +175,25 @@ def main_mantext(file):
                     inline[posMonth-2]+' '+inline[posMonth]+' '+inline[posMonth+1]))
         line_no += 1
     select_org = []
+    print('tag1',tag1)
+    print('org',org)
+    print(f'select_list_org = {select_list_org}')
     if select_list_org == 1:
         if len(org) > 0:
-            select_org.append(org[0])
+            find_stop = org[0].find('โทร')
+            if find_stop != -1:
+                select_org.append(org[0][:find_stop])
+            else:
+                select_org.append(org[0])
+        else:
+            find_stop = tag1[0].find('โทร')
+            if find_stop != -1:
+                select_org.append(tag1[0][:find_stop])
+            else:
+                select_org.append(tag1[0])
     elif select_list_org == -1:
         if len(tag1) > 0:
             select_org.append(tag1[0])
-    index_org = 0
     if len(select_org) == 0:
         select_org.append("ไม่พบข้อมูล")
     if len(topic) == 0:
